@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotating Photo Cube with Background Music</title>
+    <style>
+        body {
+            margin: 0;
+            background-image: url('./image2.png'); /* Updated relative path */
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .scene {
+            width: 300px;
+            height: 300px;
+            perspective: 1200px;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-in-out;
+            cursor: grab;
+        }
+
+        .cube:active {
+            cursor: grabbing;
+        }
+
+        .cube img {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 6px solid #fcfcfc; /* Enhanced border thickness */
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .front  { transform: rotateY(0deg) translateZ(150px); }
+        .back   { transform: rotateY(180deg) translateZ(150px); }
+        .right  { transform: rotateY(90deg) translateZ(150px); }
+        .left   { transform: rotateY(-90deg) translateZ(150px); }
+        .top    { transform: rotateX(90deg) translateZ(150px); }
+        .bottom { transform: rotateX(-90deg) translateZ(150px); }
+
+        @keyframes rotate {
+            from {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+            to {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        .music-icon {
+    position: absolute; /* Position relative to the .scene container */
+    bottom: 10px; /* Distance from the bottom of the cube */
+    left: 50%; /* Center horizontally inside the cube */
+    transform: translateX(-50%); /* Shift left by half its width to center */
+    width: 60px; /* Icon size */
+    height: 60px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it’s above the cube */
+    background-color: rgba(255, 255, 255, 0.7); /* Optional: background to make it stand out */
+    border-radius: 50%; /* Optional: round shape */
+    padding: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: shadow for better visibility */
+}
+
+@media (max-width: 768px) {
+    .music-icon {
+        width: 70px; /* Larger icon for mobile */
+        height: 70px;
+    }
+}
+
+        audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="cube" id="cube">
+            <img src="./photo1.jpg" alt="Photo 1" class="front">
+            <img src="./photo2.jpg" alt="Photo 2" class="back">
+            <img src="./photo3.jpg" alt="Photo 3" class="right">
+            <img src="./photo4.jpg" alt="Photo 4" class="left">
+            <img src="./photo5.jpg" alt="Photo 5" class="top">
+            <img src="./photo6.jpg" alt="Photo 6" class="bottom">
+        </div>
+    
+
+    <audio id="background-music" autoplay loop>
+        <source src="./audio.mp3" type="audio/mpeg"> <!-- Updated relative path -->
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music toggle icon -->
+    <img src="./icon4.png" alt="Toggle Music" class="music-icon" id="toggle-music-btn">
+
+    <script>
+        const cube = document.getElementById('cube');
+        const music = document.getElementById('background-music');
+        const toggleBtn = document.getElementById('toggle-music-btn');
+        let isDragging = false;
+        let lastX, lastY;
+        let rotationX = 0;
+        let rotationY = 0;
+        let autoRotate;
+
+        const startAutoRotate = () => {
+            cube.style.animation = 'rotate 25s infinite linear';
+        };
+
+        const stopAutoRotate = () => {
+            cube.style.animation = 'none';
+        };
+
+        const resetAutoRotate = () => {
+            stopAutoRotate();
+            clearTimeout(autoRotate);
+            autoRotate = setTimeout(startAutoRotate, 15000);
+        };
+
+        cube.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            stopAutoRotate();
+        });
+
+        cube.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - lastX;
+            const deltaY = e.clientY - lastY;
+            rotationX -= deltaY * 0.5;
+            rotationY += deltaX * 0.5;
+            cube.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        cube.addEventListener('mouseup', () => {
+            isDragging = false;
+            resetAutoRotate();
+        });
+
+        cube.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        cube.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                stopAutoRotate();
+            }
+        });
+
+        cube.addEventListener('touchmove', (e) => {
+            if (!isDragging || e.touches.length !== 1) return;
+            const deltaX = e.touches[0].clientX - lastX;
+            const deltaY = e.touches[0].clientY - lastY;
+            rotationX -= deltaY * 0.5;
+            rotationY += deltaX * 0.5;
+            cube.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+        });
+
+        cube.addEventListener('touchend', () => {
+            isDragging = false;
+            resetAutoRotate();
+        });
+
+        // Toggle music play/pause
+        toggleBtn.addEventListener('click', () => {
+            if (music.paused) {
+                music.play();
+            } else {
+                music.pause();
+            }
+        });
+
+        startAutoRotate();
+    </script>
+</body>
+</html>
