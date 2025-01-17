@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rotating Photo Cube with Background Music</title>
     <style>
+        /* General Styles */
         body {
             margin: 0;
             background-image: url('./image2.png'); /* Updated relative path */
@@ -18,6 +19,7 @@
             overflow: hidden;
         }
 
+        /* 3D Scene and Cube */
         .scene {
             width: 300px;
             height: 300px;
@@ -62,28 +64,37 @@
             }
         }
 
+        /* Music Icon Button */
         .music-icon {
-    position: absolute; /* Position relative to the .scene container */
-    bottom: 10px; /* Distance from the bottom of the cube */
-    left: 50%; /* Center horizontally inside the cube */
-    transform: translateX(-50%); /* Shift left by half its width to center */
-    width: 60px; /* Icon size */
-    height: 60px;
-    cursor: pointer;
-    z-index: 1000; /* Ensure it’s above the cube */
-    background-color: rgba(255, 255, 255, 0.7); /* Optional: background to make it stand out */
-    border-radius: 50%; /* Optional: round shape */
-    padding: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: shadow for better visibility */
-}
+            position: fixed; /* Keeps it fixed to the screen */
+            bottom: 20px; /* 20px above the bottom edge */
+            right: 20px; /* 20px from the right edge */
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.8); /* Optional background color */
+            border-radius: 50%; /* Makes the button circular */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Adds a shadow for aesthetics */
+            display: flex; /* Centers the icon inside the button */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensures it stays above all other elements */
+            cursor: pointer; /* Makes it clickable */
+        }
 
-@media (max-width: 768px) {
-    .music-icon {
-        width: 70px; /* Larger icon for mobile */
-        height: 70px;
-    }
-}
+        .music-icon img {
+            width: 90%; /* Scales the inner icon */
+            height: 90%;
+        }
 
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .music-icon {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Hide the audio element */
         audio {
             display: none;
         }
@@ -99,15 +110,18 @@
             <img src="./photo5.jpg" alt="Photo 5" class="top">
             <img src="./photo6.jpg" alt="Photo 6" class="bottom">
         </div>
-    
+    </div>
 
+    <!-- Music toggle button -->
+    <div class="music-icon" id="toggle-music-btn">
+        <img src="./icon2.png" alt="Toggle Music">
+    </div>
+
+    <!-- Background Music -->
     <audio id="background-music" autoplay loop>
-        <source src="./audio.mp3" type="audio/mpeg"> <!-- Updated relative path -->
+        <source src="./audio.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
-
-    <!-- Music toggle icon -->
-    <img src="./icon4.png" alt="Toggle Music" class="music-icon" id="toggle-music-btn">
 
     <script>
         const cube = document.getElementById('cube');
