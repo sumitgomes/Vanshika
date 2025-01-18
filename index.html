@@ -209,14 +209,6 @@
         });
 
         startAutoRotate();
-
-        // Attempt to play music on page load
-    window.addEventListener('load', () => {
-        const music = document.getElementById('background-music');
-        music.play().catch(() => {
-            console.log("Autoplay blocked. Waiting for user interaction.");
-        });
-      });
     </script>
 </body>
 </html>
